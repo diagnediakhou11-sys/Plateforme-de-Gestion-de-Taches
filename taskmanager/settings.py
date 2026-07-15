@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='clé-de-secours-super-secrete')
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-test-key-local')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
 if config('RAILWAY_ENVIRONMENT', default=None):
@@ -81,10 +81,9 @@ WSGI_APPLICATION = 'taskmanager.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': config(
-        'DATABASE_URL',
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        cast=dj_database_url.parse
+    'default': dj_database_url.config(
+        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}",
+        conn_max_age=600
     )
 }
 
@@ -126,8 +125,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Dossier où Django va rassembler tous les fichiers statiques pour la production
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Utiliser WhiteNoise pour compresser et mettre en cache les fichiers statiques
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Configuration du middleware Whitenoise pour servir les fichiers CSS/JS de manière ultra-rapide sur le Cloud
 WHITENOISE_USE_FINDERS = True
 STORAGES = {
