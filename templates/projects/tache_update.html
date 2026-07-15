@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier la Tâche - {{ tache.titre }}{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        background: #ffffff;
+        border-radius: 14px;
+        border-top: 4px solid #7c3aed;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        padding: 35px;
+    }
+    .form-label-custom {
+        color: #1e3a8a;
+        font-weight: 600;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .btn-mauve {
+        background-color: #7c3aed;
+        color: white;
+    }
+    .btn-mauve:hover {
+        background-color: #6d28d9;
+        color: white;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="form-container">
+            <h3 class="fw-bold mb-4" style="color: #1e3a8a;">
+                <i class="bi bi-pencil-square me-2"></i>Modifier la Tâche
+            </h3>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Balise INPUT pour modifier le titre (pré-rempli) -->
+                <div class="mb-3">
+                    <label for="id_titre" class="form-label form-label-custom">Intitulé de la tâche</label>
+                    <input type="text" name="titre" id="id_titre" class="form-control" value="{{ tache.titre }}" required>
+                </div>
+
+                <!-- Balise TEXTAREA pour modifier la description -->
+                <div class="mb-3">
+                    <label for="id_description" class="form-label form-label-custom">Description / Consignes</label>
+                    <textarea name="description" id="id_description" class="form-control" rows="3">{{ tache.description }}</textarea>
+                </div>
+
+                <div class="row">
+                    <!-- Balise SELECT pour le Projet associé -->
+                    <div class="col-md-6 mb-3">
+                        <label for="id_projet" class="form-label form-label-custom">Rattacher au projet</label>
+                        <select name="projet" id="id_projet" class="form-select" required>
+                            {% for p in projets_disponibles %}
+                                <option value="{{ p.id }}" {% if p.id == tache.projet.id %}selected{% endif %}>{{ p.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Balise SELECT pour le collaborateur assigné -->
+                    <div class="col-md-6 mb-3">
+                        <label for="id_assignee" class="form-label form-label-custom">Assigner à (Membre)</label>
+                        <select name="assignee" id="id_assignee" class="form-select">
+                            <option value="">-- Non assignée (En attente) --</option>
+                            {% for u in utilisateurs %}
+                                <option value="{{ u.id }}" {% if u.id == tache.assignee.id %}selected{% endif %}>{{ u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Balise SELECT pour modifier le statut courant -->
+                    <div class="col-md-6 mb-3">
+                        <label for="id_statut" class="form-label form-label-custom">Statut actuel</label>
+                        <select name="statut" id="id_statut" class="form-select">
+                            <option value="a_faire" {% if tache.statut == 'a_faire' %}selected{% endif %}>À faire</option>
+                            <option value="en_cours" {% if tache.statut == 'en_cours' %}selected{% endif %}>En cours</option>
+                            <option value="termine" {% if tache.statut == 'termine' %}selected{% endif %}>Terminé</option>
+                        </select>
+                    </div>
+
+                    <!-- Balise INPUT de type date pour la Date Limite (pré-remplie) -->
+                    <div class="col-md-6 mb-3">
+                        <label for="id_deadline" class="form-label form-label-custom">Échéance (Deadline)</label>
+                        <input type="date" name="deadline" id="id_deadline" class="form-control" value="{{ tache.deadline|date:'Y-m-d' }}">
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="mt-4 pt-2 border-top d-flex justify-content-end">
+                    <a href="{% url 'projects:projet_detail' tache.projet.id %}" class="btn btn-light border me-2">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-mauve">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Mettre à jour
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

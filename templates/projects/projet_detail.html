@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails du Projet - {{ project.nom }}{% endblock %}
+
+{% block content %}
+<style>
+    .project-header-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border-left: 6px solid #1e3a8a;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+    }
+    .task-table-card {
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 25px;
+        margin-top: 30px;
+    }
+    .table th {
+        color: #1e3a8a;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    .btn-mauve {
+        background-color: #7c3aed;
+        color: white;
+    }
+    .btn-mauve:hover {
+        background-color: #6d28d9;
+        color: white;
+    }
+</style>
+
+<!-- En-tête : Informations sur le Projet -->
+<div class="project-header-card mb-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+            <span class="badge bg-light text-primary border mb-2">Projet Actif</span>
+            <h2 class="fw-bold" style="color: #1e3a8a;">{{ project.nom }}</h2>
+            <p class="text-muted mt-2 mb-0">{{ project.description|default:"Aucune description fournie pour ce projet." }}</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            
+            {% if user == project.createur %}
+                <a href="{% url 'projects:projet_update' project.id %}" class="btn btn-sm btn-outline-primary me-2">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </a>
+                <a href="{% url 'projects:projet_delete' project.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce projet ?');">
+                    <i class="bi bi-trash me-1"></i> Supprimer
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4 pt-3 border-top d-flex justify-content-between text-muted small">
+        <div>
+            <i class="bi bi-person-circle me-1"></i> Créateur : <strong>{{ project.createur.username }}</strong>
+        </div>
+        <div>
+            <i class="bi bi-calendar3 me-1"></i> Date de création : {{ project.date_creation|date:"d M Y"|default:"Non spécifiée" }}
+        </div>
+    </div>
+</div>
+
+<!-- Section : Liste des Tâches Associées -->
+<div class="task-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <h4 class="fw-bold mb-0" style="color: #1e3a8a;">
+            <i class="bi bi-list-check me-2"></i>Tableau des Charges de Tâches
+        </h4>
+        
+        <a href="{% url 'projects:tache_create' project_id=projet.id %}" class="btn btn-mauve btn-sm mt-2 mt-sm-0">
+            <i class="bi bi-plus-lg me-1"></i> Ajouter une tâche
+        </a>
+    </div>
+
+    {% if taches %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Titre de la tâche</th>
+                        <th>Assignée à</th>
+                        <th>Statut</th>
+                        <th>Date Limite</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tache in taches %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">{{ tache.titre }}</div>
+                                <small class="text-muted">{{ tache.description|truncatechars:50 }}</small>
+                            </td>
+                            <td>
+                                <span class="text-secondary small">
+                                    <i class="bi bi-person me-1"></i>{{ tache.assignee.username|default:"Non assignée" }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if tache.statut == 'termine' %}bg-success{% elif tache.statut == 'en_cours' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                    {{ tache.get_statut_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-event me-1"></i>{{ tache.deadline|date:"d/m/Y"|default:"Pas de date" }}
+                                </small>
+                            </td>
+                            <td class="text-end">
+                            
+                                <a href="{% url 'projects:tache_update' tache.id %}" class="btn btn-sm btn-light border text-primary me-1" title="Modifier la tâche">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <a href="{% url 'projects:tache_delete' tache.id %}" class="btn btn-sm btn-light border text-danger" title="Supprimer la tâche" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?');">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-clipboard-x display-4 text-muted"></i>
+            <p class="text-muted mt-3 mb-0">Aucune tâche n'a encore été planifiée pour ce projet.</p>
+        </div>
+    {% endif %}
+
+    <div class="mt-4 pt-3 border-top">
+        <a href="{% url 'projects:dashboard' %}" class="btn btn-light border btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Retour au tableau de bord
+        </a>
+    </div>
+</div>
+{% endblock %}

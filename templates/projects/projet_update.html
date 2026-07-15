@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier le Projet - {{ project.nom }}{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        background: #ffffff;
+        border-radius: 14px;
+        border-top: 4px solid #1e3a8a;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        padding: 35px;
+    }
+    .form-label-custom {
+        color: #1e3a8a;
+        font-weight: 600;
+    }
+    .form-control:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .btn-mauve {
+        background-color: #7c3aed;
+        color: white;
+    }
+    .btn-mauve:hover {
+        background-color: #6d28d9;
+        color: white;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="form-container">
+            <h3 class="fw-bold mb-4" style="color: #1e3a8a;">
+                <i class="bi bi-pencil-square me-2"></i>Modifier le Projet
+            </h3>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Balise INPUT pour modifier le nom du projet, pré-remplie -->
+                <div class="mb-3">
+                    <label for="id_nom" class="form-label form-label-custom">Nom du projet</label>
+                    <input type="text" name="nom" id="id_nom" class="form-control" value="{{ project.nom }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_description" class="form-label form-label-custom">Description du projet</label>
+                    <textarea name="description" id="id_description" class="form-control" rows="4">{{ project.description }}</textarea>
+                </div>
+
+                <div class="mt-4 pt-2 border-top d-flex justify-content-end">
+                    <a href="{% url 'projects:projet_detail' project.id %}" class="btn btn-light border me-2">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn btn-mauve">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Mettre à jour
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

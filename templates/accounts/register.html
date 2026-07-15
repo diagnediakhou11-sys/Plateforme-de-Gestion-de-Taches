@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Inscription - TaskManager UN-CHK{% endblock %}
+
+{% block visitor_content %}
+<style>
+    .register-container {
+        background: #ffffff;
+        border-radius: 14px;
+        border-top: 4px solid #1e3a8a;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+        margin-top: 20px;
+    }
+    .form-label-custom {
+        color: #1e3a8a;
+        font-weight: 600;
+    }
+    .form-control:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+    .btn-register-auth {
+        background-color: #1e3a8a;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-register-auth:hover {
+        background-color: #172b6b;
+        color: white;
+        transform: translateY(-1px);
+    }
+    .link-login {
+        color: #7c3aed;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .link-login:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="register-container">
+            <!-- En-tête de la page d'inscription -->
+            <div class="text-center mb-4">
+                <div class="display-5 text-primary mb-2" style="color: #1e3a8a !important;">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h3 class="fw-bold" style="color: #1e3a8a;">Créer un Compte</h3>
+                <p class="text-muted small">Rejoignez la plateforme collaborative de gestion de projets</p>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Gestion globale des erreurs du formulaire d'inscription -->
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small shadow-sm mb-3">
+                        {% for error in form.non_field_errors %}
+                            <i class="bi bi-exclamation-circle-fill me-1"></i> {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Champ 1 : Identifiant / Username écrit manuellement -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label form-label-custom">
+                        <i class="bi bi-person me-1"></i> Identifiant / Nom d'utilisateur
+                    </label>
+                    <input type="text" name="username" id="id_username" class="form-control" placeholder="Choisissez un identifiant unique" required autocomplete="username">
+                    <small class="text-muted block d-block mt-1" style="font-size: 0.75rem;">
+                        150 caractères maximum. Uniquement des lettres, des chiffres et les caractères @/./+/-/_.
+                    </small>
+                    {% if form.username.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.username.errors %}<i class="bi bi-exclamation-triangle me-1"></i>{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Champ 2 : Mot de passe écrit manuellement -->
+                <div class="mb-3">
+                    <label for="id_password1" class="form-label form-label-custom">
+                        <i class="bi bi-key me-1"></i> Mot de passe
+                    </label>
+                    <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Entrez un mot de passe robuste" required autocomplete="new-password">
+                    {% if form.password1.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.password1.errors %}<i class="bi bi-exclamation-triangle me-1"></i>{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Champ 3 : Confirmation du mot de passe écrit manuellement -->
+                <div class="mb-4">
+                    <label for="id_password2" class="form-label form-label-custom">
+                        <i class="bi bi-key-fill me-1"></i> Confirmez votre mot de passe
+                    </label>
+                    <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Saisissez à nouveau le mot de passe" required autocomplete="new-password">
+                    {% if form.password2.errors %}
+                        <div class="text-danger small mt-1">
+                            {% for error in form.password2.errors %}<i class="bi bi-exclamation-triangle me-1"></i>{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Bouton de soumission pour valider l'inscription -->
+                <button type="submit" class="btn btn-register-auth w-100 py-2 shadow-sm">
+                    <i class="bi bi-check-circle me-2"></i> Valider mon inscription
+                </button>
+            </form>
+
+            <!-- Lien de bascule vers la connexion -->
+            <div class="text-center mt-4 pt-3 border-top">
+                <p class="mb-0 small text-muted">
+                    Vous possédez déjà un compte ?
+                    <a href="{% url 'accounts:login' %}" class="link-login">
+                        Connectez-vous ici
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
