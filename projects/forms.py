@@ -1,5 +1,5 @@
 from django import forms
-from .models import Projet
+from .models import Projet, Tache
 from django.contrib.auth.models import User
 
 class ProjetForm(forms.ModelForm):
@@ -9,16 +9,14 @@ class ProjetForm(forms.ModelForm):
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du projet'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Description détaillée...'}),
-            'membres': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'membres': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
         super(ProjetForm, self).__init__(*args, **kwargs)
-
         self.fields['membres'].queryset = User.objects.all()
         self.fields['membres'].required = False
 
-from .models import Tache
 
 class TacheForm(forms.ModelForm):
     class Meta:

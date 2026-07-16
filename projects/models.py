@@ -7,7 +7,7 @@ class Projet(models.Model):
     nom = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     createur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projets_crees')
-    membres = models.ManyToManyField(User, related_name='projets_rejoints') 
+    membres = models.ManyToManyField(User, related_name='projets_rejoints', blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
 
