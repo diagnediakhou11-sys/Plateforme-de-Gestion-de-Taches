@@ -66,10 +66,13 @@ def project_update(request, project_id):
         form = ProjetForm(instance=projet)
     return render(request, 'projects/projet_update.html', {'form': form, 'projet': projet})
 
-# 5. Project Delete (project_delete.html)
+# 5. Project Delete (projet_delete.html)
 @login_required(login_url='accounts:login')
 def project_delete(request, project_id):
+    # On récupère le projet
     projet = get_object_or_404(Projet, id=project_id)
+    
+    # Vérification de sécurité
     if projet.createur != request.user:
         messages.error(request, "Seul le créateur peut supprimer ce projet.")
         return redirect('projects:dashboard')
@@ -78,7 +81,12 @@ def project_delete(request, project_id):
         projet.delete()
         messages.success(request, "Le projet a été supprimé avec succès.")
         return redirect('projects:dashboard')
-    return render(request, 'projects/projet_delete.html', {'projet': projet})
+        
+    # On envoie à la fois 'projet' et 'project' pour éviter les erreurs dans le template !
+    return render(request, 'projects/projet_delete.html', {
+        'projet': projet,
+        'project': projet 
+    })
 
 
 # 6. Task Create (tache_create.html)
