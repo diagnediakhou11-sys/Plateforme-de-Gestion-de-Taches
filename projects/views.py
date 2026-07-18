@@ -44,6 +44,7 @@ def project_detail(request, project_id):
     taches = projet.taches.all()
     context = {
         'projet': projet,
+        'project': projet,
         'taches': taches
     }
     return render(request, 'projects/projet_detail.html', context)
