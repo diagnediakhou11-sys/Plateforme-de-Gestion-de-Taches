@@ -64,7 +64,7 @@ def project_update(request, project_id):
             return redirect('projects:project_detail', project_id=projet.id)
     else:
         form = ProjetForm(instance=projet)
-    return render(request, 'projects/projet_update.html', {'form': form, 'projet': projet})
+    return render(request, 'projects/projet_update.html', {'form': form, 'projet': projet, 'project': projet})
 
 # 5. Project Delete (projet_delete.html)
 @login_required(login_url='accounts:login')
