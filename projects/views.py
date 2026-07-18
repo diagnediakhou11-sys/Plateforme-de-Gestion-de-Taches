@@ -60,7 +60,9 @@ def project_update(request, project_id):
     if request.method == 'POST':
         form = ProjetForm(request.POST, instance=projet)
         if form.is_valid():
-            form.save()
+            projet_mis_a_jour = form.save(commit=False)
+            projet_mis_a_jour.save()
+            form.save_m2m()
             messages.success(request, f"Le projet '{projet.nom}' a été mis à jour !")
             return redirect('projects:project_detail', project_id=projet.id)
     else:
