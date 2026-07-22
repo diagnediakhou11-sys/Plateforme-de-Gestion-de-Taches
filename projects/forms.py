@@ -1,4 +1,4 @@
-ffrom django import forms
+from django import forms
 from .models import Projet, Tache
 from django.contrib.auth.models import User
 
