@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Plateforme de Gestion de Tâches{% endblock %}</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    
-    <style>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+   
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         body {
             background-color: #f8fafc;
             min-height: 100vh;
@@ -17,33 +16,64 @@
             flex-direction: column;
         }
 
-        /* --- STYLE SI L'UTILISATEUR EST CONNECTÉ (Mise en page avec Sidebar) --- */
         {% if user.is_authenticated %}
         .wrapper {
             display: flex;
             width: 100%;
-            align-items: stretch;
             min-height: 100vh;
         }
-        .sidebar-custom {
-            min-width: 260px;
-            max-width: 260px;
-            background-color: #1e3a8a !important;
-            border-right: 4px solid #7c3aed;
-            color: #ffffff;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 999;
+
+        @media (min-width: 992px) {
+            .sidebar-custom {
+                min-width: 260px;
+                max-width: 260px;
+                background-color: #1e3a8a !important;
+                border-right: 4px solid #7c3aed;
+                color: #ffffff;
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                height: 100vh;
+                z-index: 999;
+            }
+            .main-content {
+                flex: 1;
+                margin-left: 260px;
+                padding: 40px;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
         }
+
+        @media (max-width: 991.98px) {
+            .wrapper {
+                flex-direction: column;
+            }
+            .main-content {
+                flex: 1;
+                padding: 20px 15px;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            /* Style pour la sidebar quand elle devient un menu tiroir */
+            .offcanvas-sidebar {
+                background-color: #1e3a8a !important;
+                border-right: 4px solid #7c3aed;
+                color: #ffffff;
+                width: 280px !important;
+            }
+        }
+
         .sidebar-header {
             padding: 20px;
             background-color: #13255c;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .sidebar-custom .nav-link {
+        .nav-link-custom {
             color: #cbd5e1;
             padding: 14px 20px;
             display: flex;
@@ -52,22 +82,14 @@
             font-weight: 500;
             transition: all 0.2s ease;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-decoration: none;
         }
-        .sidebar-custom .nav-link:hover, .sidebar-custom .nav-link.active {
+        .nav-link-custom:hover, .nav-link-custom.active {
             color: #ffffff;
             background-color: rgba(255, 255, 255, 0.1);
             padding-left: 25px;
         }
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 40px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        /* --- STYLE SI L'UTILISATEUR EST VISITEUR (Pas de Sidebar) --- */
+
         {% else %}
         .navbar-custom {
             background-color: #1e3a8a !important;
@@ -76,11 +98,10 @@
         }
         .main-content {
             flex: 1;
-            padding: 40px 0;
+            padding: 40px 15px;
         }
         {% endif %}
 
-        /* Pied de page */
         .footer-custom {
             background-color: #0f172a;
             color: #94a3b8;
@@ -95,35 +116,39 @@
 <body>
 
     {% if user.is_authenticated %}
-        <!-- DESIGN CONNECTÉ AVEC SIDEBAR -->
+        <nav class="navbar navbar-dark d-lg-none p-3 navbar-custom" style="background-color: #1e3a8a !important;">
+            <div class="container-fluid">
+                <span class="navbar-brand fw-bold text-white d-flex align-items-center">
+                    <i class="bi bi-ui-checks-grid me-2 text-warning fs-4"></i> TaskManager UN-CHK
+                </span>
+                <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="bi bi-list fs-3"></i>
+                </button>
+            </div>
+        </nav>
+
         <div class="wrapper">
             
-            <!-- BARRE LATÉRALE GAUCHE -->
-            <nav class="sidebar-custom">
+            <nav class="sidebar-custom d-none d-lg-flex">
                 <div class="sidebar-header">
                     <a class="text-decoration-none fw-bold text-white d-flex align-items-center" href="{% url 'projects:dashboard' %}">
                         <i class="bi bi-ui-checks-grid me-2 text-warning fs-4"></i> TaskManager UN-CHK
                     </a>
                 </div>
                 
-             <!-- Liens de navigation -->
                 <ul class="nav flex-column mt-3">
-                    <!-- TABLEAU DE BORD (Ta page d'accueil avec tes projets) -->
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'projects:dashboard' %}">
+                        <a class="nav-link-custom {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'projects:dashboard' %}">
                             <i class="bi bi-grid-1x2-fill"></i> Tableau de bord
                         </a>
                     </li>
-
-                    <!-- MON PROFIL -->
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'profil' %}active{% endif %}" href="{% url 'accounts:profil' %}">
+                        <a class="nav-link-custom {% if request.resolver_match.url_name == 'profil' %}active{% endif %}" href="{% url 'accounts:profil' %}">
                             <i class="bi bi-person-circle"></i> Mon Profil
                         </a>
                     </li>
                 </ul>
 
-                <!-- Infos utilisateur et déconnexion tout en bas -->
                 <div class="mt-auto p-3 border-top border-secondary" style="background-color: rgba(0,0,0,0.15) !important;">
                     <div class="mb-2 px-1 text-white-50 small">
                         <i class="bi bi-person-fill text-light me-1"></i> Connecté : <strong class="text-white">{{ user.username }}</strong>
@@ -137,9 +162,43 @@
                 </div>
             </nav>
 
-            <!-- ZONE DE CONTENU À DROITE -->
+            <div class="offcanvas offcanvas-start offcanvas-sidebar text-white d-lg-none" tabindex="-1" id="mobileSidebar">
+                <div class="offcanvas-header sidebar-header">
+                    <h5 class="offcanvas-title fw-bold text-white d-flex align-items-center">
+                        <i class="bi bi-ui-checks-grid me-2 text-warning"></i> TaskManager
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body d-flex flex-column justify-content-between p-0">
+                    <ul class="nav flex-column mt-3">
+                        <li class="nav-item">
+                            <a class="nav-link-custom {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'projects:dashboard' %}">
+                                <i class="bi bi-grid-1x2-fill"></i> Tableau de bord
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom {% if request.resolver_match.url_name == 'profil' %}active{% endif %}" href="{% url 'accounts:profil' %}">
+                                <i class="bi bi-person-circle"></i> Mon Profil
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="p-3 border-top border-secondary" style="background-color: rgba(0,0,0,0.15) !important;">
+                        <div class="mb-2 px-1 text-white-50 small">
+                            <i class="bi bi-person-fill text-light me-1"></i> Connecté : <strong class="text-white">{{ user.username }}</strong>
+                        </div>
+                        <form action="{% url 'accounts:logout' %}" method="post" class="m-0 p-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger w-100 fw-bold">
+                                <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZONE DE CONTENU PRINCIPAL -->
             <main class="main-content">
-                <!-- Zone d'affichage des messages flash -->
                 {% if messages %}
                     <div class="container-fluid p-0 mb-4">
                         {% for message in messages %}
@@ -152,11 +211,8 @@
                     </div>
                 {% endif %}
 
-                <!-- Appel unique du bloc content pour l'utilisateur connecté -->
-                {% block content %}
-                {% endblock %}
+                {% block content %}{% endblock %}
 
-                <!-- Footer intégré à droite -->
                 <footer class="footer-custom text-center rounded-3 mt-5">
                     <div class="container">
                         <p class="mb-1">© 2026 <strong>TaskManager UN-CHK</strong> - Plateforme Collaborative.</p>
@@ -168,7 +224,7 @@
         </div>
 
     {% else %}
-        <!-- DESIGN CLASSIQUE POUR LES VISITEURS (LOGIN / REGISTER) -->
+        <!-- DESIGN CLASSIQUE VISITEURS -->
         <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-5">
             <div class="container">
                 <span class="navbar-brand fw-bold text-white d-flex align-items-center">
@@ -186,7 +242,6 @@
         </nav>
 
         <div class="container main-content">
-            <!-- Zone d'affichage des messages flash -->
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
@@ -197,18 +252,13 @@
                 {% endfor %}
             {% endif %}
 
-            <!-- Pour que le visiteur utilise le même bloc unique, Django l'affichera ici s'il n'est pas connecté -->
-            {% if not user.is_authenticated %}
-                {% block visitor_content %}
-                    {{ block.super }}
-                {% endblock %}
-            {% endif %}
+            {% block visitor_content %}{% endblock %}
         </div>
 
         <footer class="footer-custom text-center">
             <div class="container">
                 <p class="mb-1">© 2026 <strong>TaskManager UN-CHK</strong> - Plateforme Collaborative Universitaire.</p>
-                <small class="text-muted">Développé dans le cadre des travaux pratiques de développement d'applications.</small>
+                <small class="text-muted">Développé dans le cadre des travaux pratiques.</small>
             </div>
         </footer>
     {% endif %}
