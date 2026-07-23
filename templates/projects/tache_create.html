@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {% if task.id %}Modifier la Tâche - {{ task.titre }}{% else %}Créer une Tâche{% endif %}
+    {% if tache.id %}Modifier la Tâche - {{ tache.titre }}{% else %}Créer une Tâche{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
     <div class="col-md-8 col-lg-7">
         <div class="form-container">
             <h3 class="fw-bold mb-4" style="color: #1e3a8a;">
-                {% if task.id %}
+                {% if tache.id %}
                     <i class="bi bi-pencil-square me-2"></i>Modifier la Tâche
                 {% else %}
                     <i class="bi bi-list-task me-2"></i>Planifier une Nouvelle Tâche
@@ -47,92 +47,61 @@
                 
                 <!-- Intitulé de la tâche -->
                 <div class="mb-3">
-                    <label for="id_titre" class="form-label form-label-custom">Intitulé de la tâche <span class="text-danger">*</span></label>
-                    <input type="text" name="titre" id="id_titre" class="form-control" 
-                           placeholder="Ex: Rédiger le rapport technique" 
-                           value="{{ task.titre|default:'' }}" required>
+                    <label for="{{ form.titre.id_for_label }}" class="form-label form-label-custom">Intitulé de la tâche <span class="text-danger">*</span></label>
+                    {{ form.titre }}
+                    {% if form.titre.errors %}<div class="text-danger small mt-1">{{ form.titre.errors }}</div>{% endif %}
                 </div>
 
                 <!-- Description / Consignes -->
                 <div class="mb-3">
-                    <label for="id_description" class="form-label form-label-custom">Description / Consignes</label>
-                    <textarea name="description" id="id_description" class="form-control" rows="3" 
-                              placeholder="Précisez les livrables attendus...">{{ task.description|default:'' }}</textarea>
+                    <label for="{{ form.description.id_for_label }}" class="form-label form-label-custom">Description / Consignes</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors }}</div>{% endif %}
                 </div>
 
                 <div class="row">
                     <!-- Associer au Projet parent -->
                     <div class="col-md-6 mb-3">
-                        <label for="id_projet" class="form-label form-label-custom">Rattacher au projet <span class="text-danger">*</span></label>
-                        <select name="projet" id="id_projet" class="form-select" required>
-                            <option value="">-- Choisir un projet --</option>
-                            {% for p in projets_disponibles %}
-                                <option value="{{ p.id }}" {% if task.projet.id == p.id %}selected{% endif %}>
-                                    {{ p.nom }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <label for="{{ form.projet.id_for_label }}" class="form-label form-label-custom">Rattacher au projet <span class="text-danger">*</span></label>
+                        {{ form.projet }}
+                        {% if form.projet.errors %}<div class="text-danger small mt-1">{{ form.projet.errors }}</div>{% endif %}
                     </div>
 
                     <!-- Assigner à un collaborateur -->
                     <div class="col-md-6 mb-3">
-                        <label for="id_assignee" class="form-label form-label-custom">Assigner à (Membre)</label>
-                        <select name="assignee" id="id_assignee" class="form-select">
-                            <option value="">-- Non assignée (En attente) --</option>
-                            {% for u in utilisateurs %}
-                                <option value="{{ u.id }}" {% if task.assignee.id == u.id %}selected{% endif %}>
-                                    {{ u.username }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                        <label for="{{ form.assignee.id_for_label }}" class="form-label form-label-custom">Assigner à (Membre)</label>
+                        {{ form.assignee }}
+                        {% if form.assignee.errors %}<div class="text-danger small mt-1">{{ form.assignee.errors }}</div>{% endif %}
                     </div>
                 </div>
 
                 <div class="row">
                     <!-- Statut de la tâche -->
                     <div class="col-md-6 mb-3">
-                        <label for="id_statut" class="form-label form-label-custom">Statut</label>
-                        <select name="statut" id="id_statut" class="form-select">
-                            <option value="a_faire" {% if task.statut == 'a_faire' or not task.statut %}selected{% endif %}>À faire</option>
-                            <option value="en_cours" {% if task.statut == 'en_cours' %}selected{% endif %}>En cours</option>
-                            <option value="termine" {% if task.statut == 'termine' %}selected{% endif %}>Terminé</option>
-                        </select>
+                        <label for="{{ form.statut.id_for_label }}" class="form-label form-label-custom">Statut</label>
+                        {{ form.statut }}
+                        {% if form.statut.errors %}<div class="text-danger small mt-1">{{ form.statut.errors }}</div>{% endif %}
                     </div>
 
                     <!-- Échéance (Deadline) -->
                     <div class="col-md-6 mb-3">
-                        <label for="id_deadline" class="form-label form-label-custom">Échéance (Deadline)</label>
-                        <input type="date" name="deadline" id="id_deadline" class="form-control" 
-                               value="{% if task.deadline %}{{ task.deadline|date:'Y-m-d' }}{% endif %}">
+                        <label for="{{ form.deadline.id_for_label }}" class="form-label form-label-custom">Échéance (Deadline)</label>
+                        {{ form.deadline }}
+                        {% if form.deadline.errors %}<div class="text-danger small mt-1">{{ form.deadline.errors }}</div>{% endif %}
                     </div>
                 </div>
 
                 <div class="mt-4 pt-2 border-top d-flex justify-content-end">
-                    <a href="{% if task.projet %}{% url 'projects:projet_detail' task.projet.id %}{% else %}{% url 'projects:dashboard' %}{% endif %}" class="btn btn-light border me-2">
+                    <a href="{% if projet %}{% url 'projects:projet_detail' projet.id %}{% else %}{% url 'projects:dashboard' %}{% endif %}" class="btn btn-light border me-2">
                         <i class="bi bi-x-circle me-1"></i> Annuler
                     </a>
                     <button type="submit" class="btn btn-mauve">
-                        <i class="bi {% if task.id %}bi-check-circle{% else %}bi-plus-circle{% endif %} me-1"></i> 
-                        {% if task.id %}Enregistrer les modifications{% else %}Créer la tâche{% endif %}
+                        <i class="bi {% if tache.id %}bi-check-circle{% else %}bi-plus-circle{% endif %} me-1"></i> 
+                        {% if tache.id %}Enregistrer les modifications{% else %}Créer la tâche{% endif %}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Uniquement en mode création (si aucun projet n'est encore sélectionné par défaut par l'instance)
-        const projetSelect = document.getElementById('id_projet');
-        if (projetSelect && projetSelect.value === "") {
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectIdParam = urlParams.get('project');
-            if (projectIdParam) {
-                projetSelect.value = projectIdParam;
-            }
-        }
-    });
-</script>
 {% endblock %}
