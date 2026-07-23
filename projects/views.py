@@ -172,15 +172,13 @@ def task_delete(request, task_id):
     return render(request, 'projects/tache_delete.html', {'tache': tache})
 
 
-# 10. Project List
+# 10. Project List -> Redirige vers le Dashboard
 @login_required(login_url='accounts:login')
 def project_list(request):
-    projets = (Projet.objects.filter(createur=request.user) | Projet.objects.filter(membres=request.user)).distinct()
-    return render(request, 'projects/project_list.html', {'projets': projets})
+    return redirect('projects:dashboard')
 
 
-# 11. Task List
+# 11. Task List -> Redirige vers le Dashboard
 @login_required(login_url='accounts:login')
 def task_list(request):
-    taches = Tache.objects.filter(projet__createur=request.user) | Tache.objects.filter(projet__membres=request.user)
-    return render(request, 'projects/task_list.html', {'taches': taches.distinct()})
+    return redirect('projects:dashboard')
