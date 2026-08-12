@@ -1,8 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required  # <-- AJOUTEZ CETTE LIGNE !
+from django.contrib.auth.decorators import login_required
 from .models import Projet, Tache
 from .forms import ProjetForm, TacheForm
 from django.contrib import messages
+
+# 1. Dashboard (Tableau de bord)
+@login_required(login_url='accounts:login')
+def dashboard(request):
+    projets = (Projet.objects.filter(createur=request.user) | Projet.objects.filter(membres=request.user)).distinct()
+    taches_assignees = Tache.objects.filter(assignee=request.user)
+    
+    context = {
+        'projets': projets,
+        'taches_assignees': taches_assignees
+    }
+    return render(request, 'projects/dashboard.html', context)
 @login_required(login_url='accounts:login')
 def task_create(request, project_id=None):
     projet = None
