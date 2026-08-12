@@ -24,12 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-test-key-local')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
-if config('RAILWAY_ENVIRONMENT', default=None):
-    ALLOWED_HOSTS.append('*')
+# SECURITY WARNING: don't run with debug turned on in production!
+# Par défaut False pour respecter les consignes de sécurité, mais peut passer à True via .env en local
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Autoriser les domaines locaux et tous les domaines de déploiement (Render/Railway)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,.onrender.com,*').split(',')
 
 
 # Application definition
