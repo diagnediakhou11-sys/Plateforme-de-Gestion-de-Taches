@@ -29,13 +29,13 @@ def project_create(request):
             projet = form.save(commit=False)
             projet.createur = request.user
             projet.save()
-            form.save_m2m()  # Pour sauvegarder les membres si le champ existe dans le form
-            messages.success(request, f"Le projet '{projet.titre}' a été créé !")
+            form.save_m2m()  # Pour sauvegarder les membres
+            # CORRECTION : projet.nom au lieu de projet.titre
+            messages.success(request, f"Le projet '{projet.nom}' a été créé !")
             return redirect('projects:dashboard')
     else:
         form = ProjetForm()
     return render(request, 'projects/projet_form.html', {'form': form})
-
 
 # 3. Détail d'un projet
 @login_required(login_url='accounts:login')
