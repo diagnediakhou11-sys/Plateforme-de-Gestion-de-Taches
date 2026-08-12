@@ -30,13 +30,14 @@ def project_create(request):
             projet.createur = request.user
             projet.save()
             form.save_m2m()  # Pour sauvegarder les membres
-            # CORRECTION : projet.nom au lieu de projet.titre
             messages.success(request, f"Le projet '{projet.nom}' a été créé !")
             return redirect('projects:dashboard')
     else:
         form = ProjetForm()
-    # Après (correct) :
-return render(request, 'projects/projet_create.html', {'form': form})
+    
+    # CORRECTION : Indentation fixée + 'projet_create.html'
+    return render(request, 'projects/projet_create.html', {'form': form})
+
 
 # 3. Détail d'un projet
 @login_required(login_url='accounts:login')
@@ -67,7 +68,9 @@ def project_update(request, project_id):
             return redirect('projects:projet_detail', project_id=projet.id)
     else:
         form = ProjetForm(instance=projet)
-    return render(request, 'projects/projet_form.html', {'form': form, 'projet': projet})
+    
+    # CORRECTION ICI : Remplacement de projet_form.html par projet_create.html
+    return render(request, 'projects/projet_create.html', {'form': form, 'projet': projet})
 
 
 # 5. Suppression d'un projet
