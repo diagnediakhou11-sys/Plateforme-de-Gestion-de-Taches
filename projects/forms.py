@@ -21,9 +21,10 @@ class ProjetForm(forms.ModelForm):
 class TacheForm(forms.ModelForm):
     class Meta:
         model = Tache
-        # CORRECTION : On retire 'projet' des fields car il est géré automatiquement par la vue !
-        fields = ['titre', 'description', 'assignee', 'statut', 'priorite', 'deadline']
+        # Rétablissement de 'projet' dans les champs
+        fields = ['projet', 'titre', 'description', 'assignee', 'statut', 'priorite', 'deadline']
         widgets = {
+            'projet': forms.Select(attrs={'class': 'form-select'}),
             'titre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom de la tâche'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Description...'}),
             'assignee': forms.Select(attrs={'class': 'form-select'}),
@@ -38,7 +39,22 @@ class TacheForm(forms.ModelForm):
         
         super(TacheForm, self).__init__(*args, **kwargs)
 
-        # GESTION DES MEMBRES ASSIGNABLES (Créateur + Membres)
+        # 1. GESTION DU CHAMP PROJET
+        if user:
+            # On affiche uniquement les projets où l'utilisateur est créateur ou membre
+            self.fields['projet'].queryset = (
+                Projet.objects.filter(createur=user) | Projet.objects.filter(membres=user)
+            ).distinct()
+        else:
+            self.fields['projet'].queryset = Projet.objects.all()
+
+        # Si la tâche est créée DEPUIS un projet précis (via URL)
+        if projet:
+            self.fields['projet'].initial = projet
+            # On masque le champ projet ou le verrouille car il est déjà défini
+            self.fields['projet'].widget = forms.HiddenInput()
+
+        # 2. GESTION DES MEMBRES ASSIGNABLES
         if projet:
             self.fields['assignee'].queryset = (
                 User.objects.filter(id=projet.createur.id) | projet.membres.all()
