@@ -71,7 +71,7 @@ def project_update(request, project_id):
     return render(request, 'projects/projet_create.html', {'form': form, 'projet': projet})
 
 
-# 5. Suppression d'un projet
+# 5. Suppression d'un projet (Corrigé vers 'projects/projet_delete.html')
 @login_required(login_url='accounts:login')
 def project_delete(request, project_id):
     projet = get_object_or_404(Projet, id=project_id)
@@ -83,7 +83,9 @@ def project_delete(request, project_id):
         projet.delete()
         messages.success(request, "Le projet a été supprimé.")
         return redirect('projects:dashboard')
-    return render(request, 'projects/projet_confirm_delete.html', {'projet': projet})
+        
+    # Utilisation du template 'projet_delete.html'
+    return render(request, 'projects/projet_delete.html', {'projet': projet})
 
 
 # --- CRUD TÂCHES ---
