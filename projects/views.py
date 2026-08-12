@@ -35,7 +35,8 @@ def project_create(request):
             return redirect('projects:dashboard')
     else:
         form = ProjetForm()
-    return render(request, 'projects/projet_form.html', {'form': form})
+    # Après (correct) :
+return render(request, 'projects/projet_create.html', {'form': form})
 
 # 3. Détail d'un projet
 @login_required(login_url='accounts:login')
