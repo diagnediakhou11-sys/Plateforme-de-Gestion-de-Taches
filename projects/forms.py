@@ -9,19 +9,29 @@ class ProjetForm(forms.ModelForm):
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du projet'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Description détaillée...'}),
-            'membres': forms.CheckboxSelectMultiple(),
+            # On utilise SelectMultiple avec la classe Bootstrap form-select pour une sélection claire
+            'membres': forms.SelectMultiple(attrs={'class': 'form-select', 'size': '6'}),
         }
 
     def __init__(self, *args, **kwargs):
+        # Récupération optionnelle de l'utilisateur connecté depuis la vue
+        user = kwargs.pop('user', None)
         super(ProjetForm, self).__init__(*args, **kwargs)
-        self.fields['membres'].queryset = User.objects.all()
+        
+        # Si un utilisateur est transmis, on l'exclut de la liste des membres à cocher
+        # (car il est DÉJÀ le créateur du projet)
+        if user:
+            self.fields['membres'].queryset = User.objects.exclude(id=user.id)
+        else:
+            self.fields['membres'].queryset = User.objects.all()
+            
         self.fields['membres'].required = False
+        self.fields['membres'].help_text = "Maintenez 'Ctrl' (ou 'Cmd' sur Mac) pour sélectionner plusieurs membres."
 
 
 class TacheForm(forms.ModelForm):
     class Meta:
         model = Tache
-        # Rétablissement de 'projet' dans les champs
         fields = ['projet', 'titre', 'description', 'assignee', 'statut', 'priorite', 'deadline']
         widgets = {
             'projet': forms.Select(attrs={'class': 'form-select'}),
@@ -41,17 +51,14 @@ class TacheForm(forms.ModelForm):
 
         # 1. GESTION DU CHAMP PROJET
         if user:
-            # On affiche uniquement les projets où l'utilisateur est créateur ou membre
             self.fields['projet'].queryset = (
                 Projet.objects.filter(createur=user) | Projet.objects.filter(membres=user)
             ).distinct()
         else:
             self.fields['projet'].queryset = Projet.objects.all()
 
-        # Si la tâche est créée DEPUIS un projet précis (via URL)
         if projet:
             self.fields['projet'].initial = projet
-            # On masque le champ projet ou le verrouille car il est déjà défini
             self.fields['projet'].widget = forms.HiddenInput()
 
         # 2. GESTION DES MEMBRES ASSIGNABLES

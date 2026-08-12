@@ -24,7 +24,7 @@ def dashboard(request):
 @login_required(login_url='accounts:login')
 def project_create(request):
     if request.method == 'POST':
-        form = ProjetForm(request.POST)
+        form = ProjetForm(request.POST, user=request.user)
         if form.is_valid():
             projet = form.save(commit=False)
             projet.createur = request.user
@@ -33,9 +33,8 @@ def project_create(request):
             messages.success(request, f"Le projet '{projet.nom}' a été créé !")
             return redirect('projects:dashboard')
     else:
-        form = ProjetForm()
+        form = ProjetForm(user=request.user)
     
-    # CORRECTION : Indentation fixée + 'projet_create.html'
     return render(request, 'projects/projet_create.html', {'form': form})
 
 
@@ -61,15 +60,14 @@ def project_update(request, project_id):
         return redirect('projects:dashboard')
 
     if request.method == 'POST':
-        form = ProjetForm(request.POST, instance=projet)
+        form = ProjetForm(request.POST, instance=projet, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Le projet a été mis à jour.")
             return redirect('projects:projet_detail', project_id=projet.id)
     else:
-        form = ProjetForm(instance=projet)
+        form = ProjetForm(instance=projet, user=request.user)
     
-    # CORRECTION ICI : Remplacement de projet_form.html par projet_create.html
     return render(request, 'projects/projet_create.html', {'form': form, 'projet': projet})
 
 
