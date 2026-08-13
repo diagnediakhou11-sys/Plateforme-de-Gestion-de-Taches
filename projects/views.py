@@ -156,4 +156,6 @@ def task_delete(request, task_id):
         tache.delete()
         messages.success(request, "La tâche a été supprimée.")
         return redirect('projects:projet_detail', project_id=project_id)
-    return render(request, 'projects/tache_confirm_delete.html', {'tache': tache})
+    
+    # Utilisation du nom conforme au guide : 'projects/tache_delete.html'
+    return render(request, 'projects/tache_delete.html', {'tache': tache})
