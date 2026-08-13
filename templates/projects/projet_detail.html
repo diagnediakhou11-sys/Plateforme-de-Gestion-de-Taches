@@ -97,24 +97,25 @@
                             </td>
                             <td>
                                 <span class="text-secondary small">
-                                    <i class="bi bi-person me-1"></i>{{ tache.assignee.username|default:tache.assigne_a.username|default:"Non assignée" }}
+                                    <i class="bi bi-person me-1"></i>{{ tache.assignee.username|default:"Non assignée" }}
                                 </span>
                             </td>
-                            <!-- Colonne Priorité Ajoutée -->
+                            <!-- Colonne Priorité -->
                             <td>
-                                <span class="badge rounded-pill {% if tache.priorite|lower == 'haute' %}bg-danger{% elif tache.priorite|lower == 'moyenne' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
-                                    {{ tache.get_priorite_display|default:tache.priorite }}
+                                <span class="badge rounded-pill {% if tache.priorite == 'haute' %}bg-danger{% elif tache.priorite == 'moyenne' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                    {{ tache.get_priorite_display }}
                                 </span>
                             </td>
                             <!-- Colonne Statut -->
                             <td>
-                                <span class="badge rounded-pill {% if tache.statut|lower == 'termine' or tache.statut|lower == 'terminée' %}bg-success{% elif tache.statut|lower == 'en_cours' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
-                                    {{ tache.get_statut_display|default:tache.statut }}
+                                <span class="badge rounded-pill {% if tache.statut == 'termine' %}bg-success{% elif tache.statut == 'en_cours' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                    {{ tache.get_statut_display }}
                                 </span>
                             </td>
+                            <!-- Colonne Date Limite (Deadline) -->
                             <td>
                                 <small class="text-muted">
-                                    <i class="bi bi-calendar-event me-1"></i>{{ tache.deadline|default:tache.date_echeance|date:"d/m/Y"|default:"Pas de date" }}
+                                    <i class="bi bi-calendar-event me-1"></i>{{ tache.deadline|date:"d/m/Y"|default:"Pas de date" }}
                                 </small>
                             </td>
                             <td class="text-end">
