@@ -37,7 +37,7 @@
         background-color: #6d28d9;
         color: white;
     }
-    .list-group-item:hover {
+    .list-group-item-custom:hover {
         background-color: #f8fafc !important;
     }
 </style>
@@ -59,7 +59,7 @@
                 <h5 class="mb-0 fw-bold" style="color: #1e3a8a;">
                     <i class="bi bi-folder2-open me-2"></i>Mes Projets
                 </h5>
-                <a href="{% url 'projects:projet_create' %}" class="btn btn-sm btn-mauve shadow-sm px-3">
+                <a href="{% url 'projects:projet_create' %}" class="btn btn-sm btn-mauve shadow-sm px-3 rounded-pill">
                     <i class="bi bi-plus-lg me-1"></i> Nouveau Projet
                 </a>
             </div>
@@ -67,28 +67,28 @@
                 {% if projets %}
                     <div class="list-group list-group-flush">
                         {% for projet in projets %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-2 py-3 bg-transparent border-bottom">
+                            <div class="list-group-item list-group-item-custom d-flex justify-content-between align-items-center px-2 py-3 bg-transparent border-bottom">
                                 <div class="ms-1 me-auto text-truncate pe-2">
                                     <div class="fw-bold">
                                         <a href="{% url 'projects:projet_detail' projet.id %}" class="project-link fs-6">
                                             {{ projet.nom }}
                                         </a>
                                     </div>
-                                    <span class="small text-muted text-wrap">{{ projet.description|default:"Aucune description."|truncatewords:10 }}</span>
-                                    <div class="mt-1">
-                                        <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-person me-1 text-primary"></i>{{ projet.createur.username }}
+                                    <span class="small text-muted text-wrap d-block mt-1">{{ projet.description|default:"Aucune description."|truncatewords:10 }}</span>
+                                    <div class="mt-2">
+                                        <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small fw-normal">
+                                            <i class="bi bi-person me-1 text-primary"></i>Créateur : {{ projet.createur.username }}
                                         </span>
                                     </div>
                                 </div>
                                 
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    <a href="{% url 'projects:projet_detail' projet.id %}" class="btn btn-sm btn-outline-primary" title="Voir le projet">
+                                <div class="d-flex gap-1 flex-shrink-0 align-items-center">
+                                    <a href="{% url 'projects:projet_detail' projet.id %}" class="btn btn-sm btn-outline-primary rounded-circle" title="Voir le projet">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
                                     
                                     {% if user == projet.createur %}
-                                        <a href="{% url 'projects:projet_delete' projet.id %}" class="btn btn-sm btn-outline-danger" title="Supprimer le projet" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce projet ?');">
+                                        <a href="{% url 'projects:projet_delete' projet.id %}" class="btn btn-sm btn-outline-danger rounded-circle" title="Supprimer le projet" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce projet ?');">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     {% endif %}
@@ -118,26 +118,26 @@
                 {% if taches_assignees %}
                     <div class="list-group list-group-flush">
                         {% for tache in taches_assignees %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-2 py-3 bg-transparent border-bottom">
+                            <div class="list-group-item list-group-item-custom d-flex justify-content-between align-items-center px-2 py-3 bg-transparent border-bottom">
                                 <div class="text-truncate pe-2">
                                     <h6 class="mb-1 fw-semibold text-dark text-truncate">{{ tache.titre }}</h6>
-                                    <small class="text-muted">
+                                    <small class="text-muted d-block">
                                         <i class="bi bi-tags me-1" style="color: #7c3aed;"></i>Projet : <strong>{{ tache.projet.nom }}</strong>
                                     </small>
                                 </div>
                                 
                                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                     <!-- Badge Priorité -->
-                                    <span class="badge px-2 py-1 {% if tache.priorite == 'HAUTE' or tache.priorite == 'haute' %}bg-danger{% elif tache.priorite == 'MOYENNE' or tache.priorite == 'moyenne' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
-                                        {{ tache.get_priorite_display|default:tache.priorite }}
+                                    <span class="badge rounded-pill px-2 py-1 {% if tache.priorite|lower == 'haute' %}bg-danger{% elif tache.priorite|lower == 'moyenne' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                        Priorité : {{ tache.get_priorite_display|default:tache.priorite }}
                                     </span>
 
                                     <!-- Badge Statut -->
-                                    <span class="badge px-2 py-1 {% if tache.statut == 'termine' %}bg-success{% elif tache.statut == 'en_cours' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                    <span class="badge rounded-pill px-2 py-1 {% if tache.statut|lower == 'termine' or tache.statut|lower == 'terminée' %}bg-success{% elif tache.statut|lower == 'en_cours' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
                                         {{ tache.get_statut_display|default:tache.statut }}
                                     </span>
                                     
-                                    <a href="{% url 'projects:tache_detail' tache.id %}" class="btn btn-sm btn-outline-secondary" title="Voir la tâche">
+                                    <a href="{% url 'projects:tache_detail' tache.id %}" class="btn btn-sm btn-outline-secondary rounded-circle" title="Voir la tâche">
                                         <i class="bi bi-arrow-right-short"></i>
                                     </a>
                                 </div>
