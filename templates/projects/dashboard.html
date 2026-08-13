@@ -83,7 +83,6 @@
                                 </div>
                                 
                                 <div class="d-flex gap-1 flex-shrink-0">
-                            
                                     <a href="{% url 'projects:projet_detail' projet.id %}" class="btn btn-sm btn-outline-primary" title="Voir le projet">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
@@ -123,17 +122,21 @@
                                 <div class="text-truncate pe-2">
                                     <h6 class="mb-1 fw-semibold text-dark text-truncate">{{ tache.titre }}</h6>
                                     <small class="text-muted">
-                                        <i class="bi bi-tags me-1 text-purple" style="color: #7c3aed;"></i>Projet : <strong>{{ tache.projet.nom }}</strong>
+                                        <i class="bi bi-tags me-1" style="color: #7c3aed;"></i>Projet : <strong>{{ tache.projet.nom }}</strong>
                                     </small>
                                 </div>
                                 
                                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                    
-                                    <span class="badge px-2 py-1 {% if tache.statut == 'termine' %}bg-success{% elif tache.statut == 'en_cours' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
-                                        {{ tache.get_statut_display }}
+                                    <!-- Badge Priorité -->
+                                    <span class="badge px-2 py-1 {% if tache.priorite == 'HAUTE' or tache.priorite == 'haute' %}bg-danger{% elif tache.priorite == 'MOYENNE' or tache.priorite == 'moyenne' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                        {{ tache.get_priorite_display|default:tache.priorite }}
+                                    </span>
+
+                                    <!-- Badge Statut -->
+                                    <span class="badge px-2 py-1 {% if tache.statut == 'termine' %}bg-success{% elif tache.statut == 'en_cours' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                                        {{ tache.get_statut_display|default:tache.statut }}
                                     </span>
                                     
-    
                                     <a href="{% url 'projects:tache_detail' tache.id %}" class="btn btn-sm btn-outline-secondary" title="Voir la tâche">
                                         <i class="bi bi-arrow-right-short"></i>
                                     </a>
